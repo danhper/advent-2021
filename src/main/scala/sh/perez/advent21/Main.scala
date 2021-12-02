@@ -3,7 +3,8 @@ package sh.perez.advent21
 object Main {
 
   val days: Map[Int, Day] = Map(
-    1 -> Day1
+    1 -> Day1,
+    2 -> Day2
   )
 
   def main(args: Array[String]): Unit = {
