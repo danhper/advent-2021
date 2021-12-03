@@ -4,7 +4,8 @@ object Main {
 
   val days: Map[Int, Day] = Map(
     1 -> Day1,
-    2 -> Day2
+    2 -> Day2,
+    3 -> Day3
   )
 
   def main(args: Array[String]): Unit = {
