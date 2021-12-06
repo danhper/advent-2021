@@ -3,6 +3,8 @@ package sh.perez.advent21
 import scala.io.Source
 
 object Day3 extends Day {
+  val day = 3
+
   type BitCount = Map[Int, Map[Int, Int]]
 
   def countBits(lines: Iterable[String]): BitCount = {
@@ -30,12 +32,11 @@ object Day3 extends Day {
                       || (count(0) <= count(1) && !mostCommon)) 0 else 1
       doFind(index + 1, remainingLines.filter(v => v(index).asDigit == toKeep))
     }
-    val remainingLine = doFind(0, lines)
-    remainingLine.map(_.asDigit)
+    doFind(0, lines).map(_.asDigit)
   }
 
   def solve(f: (Iterable[String], Boolean) => Iterable[Int]): Int = {
-    val lines = Source.fromResource("input3.txt").getLines().toList
+    val lines = inputLines().toList
     List(true, false).map(b => binToDec(f(lines, b))).product
   }
 

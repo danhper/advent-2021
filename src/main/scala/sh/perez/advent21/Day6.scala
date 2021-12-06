@@ -22,8 +22,10 @@ class State(val elements: Map[Int, Long]) {
 }
 
 object Day6 extends Day {
+  val day = 6
+
   def solve(n: Int): Long = {
-    val values = Source.fromResource("input6.txt").getLines.next.split(",").map(_.toInt).toList
+    val values = inputFirstLine().split(",").map(_.toInt).toList
     val state = State.fromList(values)
     (0 until n).foldLeft(state)((acc, _) => acc.advance()).fishesCount
   }

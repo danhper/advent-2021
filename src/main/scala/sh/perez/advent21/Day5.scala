@@ -25,10 +25,12 @@ case class Line2D(p1: Point2D, p2: Point2D) {
 trait Day5Parser extends JavaTokenParsers {
   def point(): Parser[Point2D] = (wholeNumber <~ ",") ~ wholeNumber ^^ { case x ~ y => Point2D(x.toInt, y.toInt) }
   def line(): Parser[Line2D] = (point() <~ "->") ~ point() ^^ { case start ~ end => Line2D(start, end) }
-  def input(): Parser[List[Line2D]] = rep(line()) ^^ { case lines => lines }
+  def input(): Parser[List[Line2D]] = rep(line())
 }
 
 object Day5 extends Day with Day5Parser {
+  val day = 5
+
   def computeIntersectionCounts(lines: List[Line2D]): Set[Point2D] = {
     lines.flatMap(_.coveredPoints()).foldLeft(Map.empty[Point2D, Int]) { (acc, point) => {
       acc + (point -> (acc.getOrElse(point, 0) + 1))
@@ -36,8 +38,7 @@ object Day5 extends Day with Day5Parser {
   }
 
   def solve(p: Line2D => Boolean): Int = {
-    val inputReader = Source.fromResource("input5.txt").reader
-    val Success(lines, _) = parseAll(input(), inputReader)
+    val Success(lines, _) = parseAll(input(), inputReader())
     computeIntersectionCounts(lines.filter(p)).size
   }
 

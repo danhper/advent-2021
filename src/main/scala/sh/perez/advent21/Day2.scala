@@ -8,6 +8,8 @@ case class Up(x: Int) extends Instruction
 case class Down(x: Int) extends Instruction
 
 object Day2 extends Day {
+  val day = 2
+
   def parseInstruction(s: String): Instruction = {
     val Array(instr, n) = s.split(" ", 2)
     instr match {
@@ -19,7 +21,7 @@ object Day2 extends Day {
   }
 
   def solve(f: (Iterator[Instruction] => (Int, Int))): Int = {
-    val instrs = Source.fromResource("input2.txt").getLines().map(parseInstruction)
+    val instrs = inputLines().map(parseInstruction)
     val (x, y) = f(instrs)
     x * y
   }

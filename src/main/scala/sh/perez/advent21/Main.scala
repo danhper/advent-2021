@@ -1,27 +1,17 @@
 package sh.perez.advent21
 
 object Main {
-
-  val days: Map[Int, Day] = Map(
-    1 -> Day1,
-    2 -> Day2,
-    3 -> Day3,
-    4 -> Day4,
-    5 -> Day5,
-    6 -> Day6
-  )
-
   def main(args: Array[String]): Unit = {
     if (args.isEmpty || !args(0).forall(c => c.isDigit)) {
       Console.err.println("usage: advent-2021 <day>")
     } else {
-      val day = args(0).toInt
-      if (!days.contains(day)) {
-        Console.err.printf("day %d not solved", day)
-      } else {
-        val dayLogic = days(day)
-        printf("challenge 1: %s\n", dayLogic.solveFirst())
-        printf("challenge 2: %s\n", dayLogic.solveSecond())
+      val dayNumber = args(0).toInt
+      Day.get(dayNumber) match {
+        case Some(day) => {
+          printf("challenge 1: %s\n", day.solveFirst())
+          printf("challenge 2: %s\n", day.solveSecond())
+        }
+        case None => Console.err.printf("day %d not solved\n", dayNumber)
       }
     }
   }

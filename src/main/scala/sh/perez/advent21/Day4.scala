@@ -29,6 +29,8 @@ trait Day4Parser extends JavaTokenParsers {
 }
 
 object Day4 extends Day with Day4Parser {
+  val day = 4
+
   def findFirstWinner(draw: List[Int], boards: List[Board]): (List[Int], Board) = {
     val reducedDraw = draw.inits.toList.reverse.find(d => boards.exists(_.wins(d.toSet))).get
     (reducedDraw, boards.find(_.wins(reducedDraw.toSet)).get)
@@ -40,8 +42,7 @@ object Day4 extends Day with Day4Parser {
   }
 
   def solve(findBoard: (List[Int], List[Board]) => (List[Int], Board)): Int = {
-    val inputReader = Source.fromResource("input4.txt").reader
-    val Success((draw, boards), _) = parseAll(input(), inputReader)
+    val Success((draw, boards), _) = parseAll(input(), inputReader())
     val (smallestDraw, board) = findBoard(draw, boards)
     board.computeScore(smallestDraw.toSet) * smallestDraw.last
   }
