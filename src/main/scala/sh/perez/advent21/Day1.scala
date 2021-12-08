@@ -2,6 +2,7 @@ package sh.perez.advent21
 
 import scala.io.Source
 
+
 object Day1 extends Day {
   val day = 1
 
