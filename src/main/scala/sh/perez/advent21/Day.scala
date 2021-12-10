@@ -29,6 +29,7 @@ object Day {
     7 -> Day7,
     8 -> Day8,
     9 -> Day9,
+    10 -> Day10,
   )
 
   def get(n: Int): Option[Day] = days.get(n)
