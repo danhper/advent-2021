@@ -10,7 +10,8 @@ trait Day {
 
   lazy val mainInputFile = s"day${day}.txt"
   lazy val testInputFile = s"day${day}-test.txt"
-  lazy val isTest = List("yes", "1", "true").contains(sys.env.getOrElse("ADVENT_TEST", "no").toLowerCase)
+  lazy val isTest =
+    List("yes", "1", "true").contains(sys.env.getOrElse("ADVENT_TEST", "no").toLowerCase)
   lazy val inputFile = if (isTest) testInputFile else mainInputFile
 
   def inputLines(name: String = inputFile) = Source.fromResource(name).getLines()
@@ -19,18 +20,19 @@ trait Day {
 }
 
 object Day {
-  val days: Map[Int, Day] = Map(
-    1 -> Day1,
-    2 -> Day2,
-    3 -> Day3,
-    4 -> Day4,
-    5 -> Day5,
-    6 -> Day6,
-    7 -> Day7,
-    8 -> Day8,
-    9 -> Day9,
-    10 -> Day10,
-  )
+  val days: Map[Int, Day] = List(
+    Day1,
+    Day2,
+    Day3,
+    Day4,
+    Day5,
+    Day6,
+    Day7,
+    Day8,
+    Day9,
+    Day10,
+    Day11
+  ).map(d => d.day -> d).toMap
 
   def get(n: Int): Option[Day] = days.get(n)
 }
