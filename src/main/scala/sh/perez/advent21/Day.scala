@@ -34,6 +34,7 @@ object Day {
     Day11,
     Day12,
     Day13,
+    Day14,
   ).map(d => d.day -> d).toMap
 
   def get(n: Int): Option[Day] = days.get(n)
