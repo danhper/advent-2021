@@ -9,3 +9,5 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % 
 libraryDependencies += "edu.stanford.nlp" % "stanford-corenlp" % "4.3.2"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % Test
+
+Test / logBuffered := false

@@ -1,0 +1,2 @@
+challenge 1: 12530
+challenge 2: 50492
