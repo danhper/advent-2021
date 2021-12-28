@@ -26,19 +26,44 @@ object Day24 extends Day {
 
   lazy val programs = inputLines().toList.grouped(18).toList
 
-  def computePrevious(zs: Map[Int, Set[Long]], index: Int): Map[Int, Set[Long]] = {
+  type ResultSet = Set[List[Long]]
+  type Results = Map[Int, ResultSet]
+  type NextCompute[A] = (Int, Int, Int, Int, Int) => A
+  type NextJoin[A] = (A, Long, Results, ResultSet) => Results
+
+  def advance[A](zs: Results, index: Int, computeNext: NextCompute[A], joinNext: NextJoin[A]): Results = {
     val (n1, n2, n3) = extractVars(programs(index))
-    (1 to 9).foldLeft(Map.empty[Int, Set[Long]].withDefaultValue(Set.empty[Long])) { (acc, w) => {
+    (1 to 9).foldLeft(Map.empty[Int, Set[List[Long]]].withDefaultValue(Set.empty[List[Long]])) { (acc, w) => {
       zs.foldLeft(acc) { case (m, (z2, ws)) =>
-        reverseStep(w, z2, n1, n2, n3).foldLeft(m) { case (m, z) =>
-          m + (z -> (m(z) ++ ws.map(wt => wt + w.toLong * math.pow(10, programs.length - (index + 1)).toLong)))
-        }
+        val next = computeNext(w, z2, n1, n2, n3)
+        joinNext(next, w.toLong, m, ws)
       }
     } }
   }
 
-  // fairly naive with exponential complexity but runs in ~1m on an i7 laptop
-  lazy val possibilities = (programs.length - 1 to 0 by -1).foldLeft(Map(0 -> Set(0L)))(computePrevious)(0)
+  def computeNext(zs: Map[Int, Set[List[Long]]], index: Int): Map[Int, Set[List[Long]]] = {
+    advance(zs, index, step, (z2, w, m, ws) => m + (z2 -> (m(z2) ++ ws.map(wt => wt :+ w.toLong))))
+  }
+
+  def computePrevious(zs: Map[Int, Set[List[Long]]], index: Int): Map[Int, Set[List[Long]]] = {
+    advance(zs, index, reverseStep, (zs, w, m, ws) => zs.foldLeft(m) { (m, z) =>
+      m + (z -> (m(z) ++ ws.map(wt => w.toLong :: wt)))
+    })
+  }
+
+  def toDecimal(numbers: List[Long]): Long = numbers.foldLeft(0L) { case (acc, n) => acc * 10 + n }
+
+  // fairly naive with exponential complexity but runs in ~15s on an i7 laptop
+  def computePossibilities(): List[Long] = {
+    val splitFrontBack = 5
+    val initialMap = Map(0 -> Set(List.empty[Long]))
+    val fromFront = (0 to splitFrontBack).foldLeft(initialMap)(computeNext)
+    val fromBack = (programs.length - 1 until splitFrontBack by -1).foldLeft(initialMap)(computePrevious)
+    val intersect = fromFront.keySet.intersect(fromBack.keySet)
+    intersect.flatMap(z => for (x <- fromFront(z); y <- fromBack(z)) yield toDecimal(x ++ y)).toList
+  }
+
+  lazy val possibilities = computePossibilities()
 
   def solveFirst(): Long = possibilities.max
 
