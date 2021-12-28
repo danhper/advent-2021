@@ -1,7 +1,5 @@
 package sh.perez.advent21
 
-import scala.util.parsing.combinator.JavaTokenParsers
-
 object Day24 extends Day {
   val day = 24
 
