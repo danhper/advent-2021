@@ -31,6 +31,8 @@ object Day19 extends Day {
     def distance(other: Point3D): Int = math.abs(x - other.x) + math.abs(y - other.y) + math.abs(z - other.z)
   }
 
+  case class Measurement(id: Int, points: List[Point3D])
+
   lazy val measurements = {
     inputLines().toList.foldLeft(List(List.empty[Point3D])) { case (acc, line) => {
       line match {
@@ -38,37 +40,36 @@ object Day19 extends Day {
         case "" => List.empty[Point3D] :: acc
         case line => (acc.head :+ Point3D.fromString(line)) :: acc.tail
       }
-    } }.reverse
+    } }.reverse.zipWithIndex.map((ps, i) => Measurement(i, ps))
   }
 
-  case class Scanner(position: Point3D, measurements: List[Point3D]) {
-    val invalidMeasurements = collection.mutable.Set.empty[List[Point3D]]
+  case class Scanner(position: Point3D, measurement: Measurement) {
+    val invalidMeasurements = collection.mutable.Set.empty[Int]
     val minIntersectCount = 12
-    val normalizedMeasurements = measurements.map(p =>
+    val normalizedMeasurements = measurement.points.map(p =>
       Point3D(position.x + p.x, position.y + p.y, position.z + p.z)).toSet
     
     def matches(other: Set[Point3D]): Boolean = {
       normalizedMeasurements.intersect(other).size >= minIntersectCount
     }
 
-    def matchMeasurements(right: List[Point3D]): Option[Scanner] = {
-      if (invalidMeasurements.contains(right)) return None
-      val normalizedLeft = normalizedMeasurements.toSet
+    def matchMeasurements(right: Measurement): Option[Scanner] = {
+      if (invalidMeasurements.contains(right.id)) return None
       val result = (for {
-        t <- Point3D.transformations
-        rightTransformed = right.map(t)
-        r <- rightTransformed
-        l <- normalizedLeft
-        scanner = Scanner(Point3D(l.x - r.x, l.y - r.y, l.z - r.z), rightTransformed);
-        if scanner.matches(normalizedLeft)
+        t <- Stream.from(Point3D.transformations)
+        rightTransformed = right.points.map(t)
+        r <- Stream.from(rightTransformed)
+        l <- Stream.from(normalizedMeasurements)
+        scanner = Scanner(Point3D(l.x - r.x, l.y - r.y, l.z - r.z), right.copy(points = rightTransformed))
+        if scanner.matches(normalizedMeasurements)
       } yield scanner).headOption
-      if (!result.isDefined) invalidMeasurements += right
+      if (!result.isDefined) invalidMeasurements += right.id
       result
     }
   }
 
-  def computeScanners(measurements: List[List[Point3D]]): List[Scanner] = {
-    def loop(scanners: List[Scanner], remainingMeasurements: List[List[Point3D]]): List[Scanner] = {
+  def computeScanners(measurements: List[Measurement]): List[Scanner] = {
+    def loop(scanners: List[Scanner], remainingMeasurements: List[Measurement]): List[Scanner] = {
       remainingMeasurements match {
         case Nil => scanners
         case m :: ms => {
