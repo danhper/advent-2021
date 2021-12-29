@@ -53,7 +53,7 @@ object Day24 extends Day {
 
   def toDecimal(numbers: List[Long]): Long = numbers.foldLeft(0L) { case (acc, n) => acc * 10 + n }
 
-  // fairly naive with exponential complexity but runs in ~15s on an i7 laptop
+  // fairly naive with exponential complexity but runs in ~5s on an i7 laptop
   def computePossibilities(): List[Long] = {
     val splitFrontBack = 5
     val initialMap = Map(0 -> Set(List.empty[Long]))
